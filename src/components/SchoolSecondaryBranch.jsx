@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Box,
   Checkbox,
   FormControlLabel,
@@ -11,16 +12,43 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import React from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
+import SchoolThirdBranch from "./SchoolThirdBranch";
 
-const SchoolSecondaryBranch = ({ branchIndex, secondaryBranchIndex }) => {
+const SchoolSecondaryBranch = ({
+  branchIndex,
+  secondaryBranchIndex,
+  athProductsList,
+}) => {
   const { control } = useFormContext();
+
+  const { fields, append, remove, replace } = useFieldArray({
+    control,
+    name: `schoolBranches.${branchIndex}.deptBranches.${secondaryBranchIndex}.productPlacements`,
+  });
 
   return (
     <Box sx={{ width: "96%", ml: "4%", mb: 2 }}>
       <Typography fontWeight="bold" mb={2}>
         Department {secondaryBranchIndex + 1}
       </Typography>
+
+      <Controller
+        control={control}
+        name={`schoolBranches.${branchIndex}.deptBranches.${secondaryBranchIndex}.deptName`}
+        defaultValue={""}
+        render={({ field }) => (
+          <TextField
+            size="small"
+            id="deptName"
+            variant="outlined"
+            fullWidth
+            {...field}
+            label="Department Name"
+            sx={{ mb: 1 }}
+          />
+        )}
+      />
 
       <Box sx={{ mb: "1rem" }}>
         <FormLabel
@@ -60,95 +88,38 @@ const SchoolSecondaryBranch = ({ branchIndex, secondaryBranchIndex }) => {
 
       <Controller
         control={control}
-        name={`schoolBranches.${branchIndex}.deptBranches.${secondaryBranchIndex}.numberOfProductPlacements`}
-        defaultValue=""
-        rules={{
-          validate: (value) => {
-            if (value === "") return true;
-            return parseInt(value) >= 0 || "Must be 0 or more";
-          },
-        }}
-        render={({ field, fieldState }) => (
-          <TextField
-            {...field}
-            id="numberOfProductPlacements"
-            variant="outlined"
-            size="small"
-            fullWidth
-            label="# of Product Placement(s)"
-            type="number"
-            error={!!fieldState.error}
-            helperText={fieldState.error?.message}
-            sx={{ mb: "1rem", mt: "1rem" }}
+        name={`schoolBranches.${branchIndex}.deptBranches.${secondaryBranchIndex}.productPlacements`}
+        render={({ field }) => (
+          <Autocomplete
+            multiple
+            options={athProductsList}
+            getOptionLabel={(option) => option}
+            value={fields.map((item) => item.name)} // keep selected values in sync
+            onChange={(_, selected) => {
+              // replace field array with new selections
+              replace(selected.map((product) => ({ name: product })));
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                size="small"
+                variant="outlined"
+                label="Product Placement(s)"
+                sx={{ mb: 2, mt: 1 }}
+              />
+            )}
           />
         )}
       />
 
-      <Controller
-        name={`schoolBranches.${branchIndex}.deptBranches.${secondaryBranchIndex}.adSpacePurchased`}
-        control={control}
-        defaultValue={false} // Set the default value of the checkbox
-        render={({ field }) => (
-          <FormGroup>
-            <FormControlLabel
-              control={<Checkbox {...field} />}
-              label="Ad Space Purchased?"
-            />
-          </FormGroup>
-        )}
-      />
-
-      <Controller
-        name={`schoolBranches.${branchIndex}.deptBranches.${secondaryBranchIndex}.logoReadyProvided`}
-        control={control}
-        defaultValue={false} // Set the default value of the checkbox
-        render={({ field }) => (
-          <FormGroup>
-            <FormControlLabel
-              control={<Checkbox {...field} />}
-              label="Logo Ready? Provided?"
-            />
-          </FormGroup>
-        )}
-      />
-
-      <Controller
-        control={control}
-        name={`schoolBranches.${branchIndex}.deptBranches.${secondaryBranchIndex}.desiredColorOfAdvertisement`}
-        defaultValue={""}
-        render={({ field }) => (
-          <TextField
-            multiline
-            rows={3}
-            size="small"
-            id="desiredColorOfAdvertisement"
-            variant="outlined"
-            fullWidth
-            label="Desired Color of Advertisement?"
-            {...field}
-            sx={{ mb: "1rem", mt: "5px" }}
-          />
-        )}
-      />
-
-      <Controller
-        control={control}
-        name={`schoolBranches.${branchIndex}.deptBranches.${secondaryBranchIndex}.designNotes`}
-        defaultValue={""}
-        render={({ field }) => (
-          <TextField
-            multiline
-            rows={3}
-            size="small"
-            id="designNotes"
-            variant="outlined"
-            fullWidth
-            label="Design Notes"
-            {...field}
-            sx={{ mb: "1rem", mt: "5px" }}
-          />
-        )}
-      />
+      {fields?.map((item, thirdIndex) => (
+        <SchoolThirdBranch
+          item={item}
+          branchIndex={branchIndex}
+          secondaryBranchIndex={secondaryBranchIndex}
+          thirdIndex={thirdIndex}
+        />
+      ))}
     </Box>
   );
 };

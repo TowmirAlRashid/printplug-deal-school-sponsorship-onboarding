@@ -379,30 +379,48 @@ function App() {
                 "---------------------------" +
                 newLine +
                 newLine +
+                "Department Name: " +
+                subBranch?.deptName +
+                newLine +
+                newLine +
                 "Date of Event: " +
                 customDate(subBranch?.dateOfEvent) +
                 newLine +
                 newLine +
-                "# of Product Placement(s): " +
-                subBranch?.numberOfProductPlacements +
-                newLine +
-                newLine +
-                "Ad Space Purchased?: " +
-                subBranch?.adSpacePurchased +
-                newLine +
-                newLine +
-                "Logo Ready? Provided?: " +
-                subBranch?.logoReadyProvided +
-                newLine +
-                newLine +
-                "Desired Color of Advertisement?: " +
-                subBranch?.desiredColorOfAdvertisement +
-                newLine +
-                newLine +
-                "Design Notes: " +
-                subBranch?.designNotes +
+                "Product Placement(s): " +
+                subBranch?.productPlacements
+                  ?.map((prod) => prod?.name)
+                  ?.join(", ") +
                 newLine +
                 newLine;
+              if (subBranch?.productPlacements?.length > 0) {
+                subBranch?.productPlacements?.forEach((prod) => {
+                  content =
+                    content +
+                    prod?.name +
+                    ":" +
+                    newLine +
+                    "---------------------------" +
+                    newLine +
+                    newLine +
+                    "Ad Space Purchased?: " +
+                    prod?.adSpacePurchased +
+                    newLine +
+                    newLine +
+                    "Logo Ready? Provided?: " +
+                    prod?.logoReadyProvided +
+                    newLine +
+                    newLine +
+                    "Desired Color of Advertisement?: " +
+                    prod?.desiredColorOfAdvertisement +
+                    newLine +
+                    newLine +
+                    "Design Notes: " +
+                    prod?.designNotes +
+                    newLine +
+                    newLine;
+                });
+              }
             });
           }
         });
@@ -768,6 +786,7 @@ function App() {
                   <SchoolBranch
                     key={`${schoolIndex}`}
                     branchIndex={schoolIndex}
+                    athProductsList={athProductsList}
                   />
                 ))}
 

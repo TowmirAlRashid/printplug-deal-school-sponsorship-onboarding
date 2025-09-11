@@ -8,7 +8,7 @@ import {
 } from "react-hook-form";
 import SchoolSecondaryBranch from "./SchoolSecondaryBranch";
 
-const SchoolBranch = ({ branchIndex }) => {
+const SchoolBranch = ({ branchIndex, athProductsList }) => {
   const { control } = useFormContext();
 
   const numberOfDepts = useWatch({
@@ -91,6 +91,7 @@ const SchoolBranch = ({ branchIndex }) => {
           key={`${secondaryBranchIndex}`}
           branchIndex={branchIndex}
           secondaryBranchIndex={secondaryBranchIndex}
+          athProductsList={athProductsList}
         />
       ))}
     </Box>
