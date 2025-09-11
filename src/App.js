@@ -29,6 +29,10 @@ function App() {
   const [attachments, setAttachments] = useState({});
   const [fileErrors, setFileErrors] = useState({});
 
+  // dynamic states for picklists
+  const [athDeptsList, setAthDeptsList] = useState(null);
+  const [athProductsList, setAthProductsList] = useState(null);
+
   // helper: calculate total size across all components
   const getTotalSize = (allAttachments) => {
     return Object.values(allAttachments)
@@ -91,19 +95,25 @@ function App() {
           per_page: 200,
         });
         setRecordRelatedContactRoles(relatedContactRoles?.data?.[0]);
+
+        const variableResp = await ZOHO.CRM.API.getOrgVariable(
+          "athletic_depts_sponsored"
+        );
+        let athletic_depts_sponsored_list =
+          variableResp?.Success?.Content?.split(",");
+        setAthDeptsList(athletic_depts_sponsored_list);
+
+        const variable2Resp = await ZOHO.CRM.API.getOrgVariable(
+          "athletic_products_needed"
+        );
+        let athletic_products_needed_list =
+          variable2Resp?.Success?.Content?.split(",");
+        setAthProductsList(athletic_products_needed_list);
       };
 
       fetchData();
     }
   }, [initialized, entity, entityId]);
-
-  const athDeptSponseredOptions = [
-    "Football",
-    "Soccer",
-    "Volleyball",
-    "Baseball",
-    "Track & Field",
-  ];
 
   const methods = useForm({
     defaultValues: {
@@ -467,7 +477,13 @@ function App() {
   // Example usage
   var newLine = hexToText("0A");
 
-  if (initialized && recordData && recordRelatedContactRoles) {
+  if (
+    initialized &&
+    recordData &&
+    recordRelatedContactRoles &&
+    athDeptsList &&
+    athProductsList
+  ) {
     return (
       <Box sx={{ width: "100%" }}>
         <FormProvider {...methods}>
@@ -670,7 +686,7 @@ function App() {
                       multiple
                       id="athDeptSponsered"
                       size="small"
-                      options={athDeptSponseredOptions}
+                      options={athDeptsList}
                       getOptionLabel={(option) => option}
                       onChange={(_, data) => {
                         field.onChange(data);
@@ -711,6 +727,7 @@ function App() {
                       fileErrors={fileErrors}
                       attachments={attachments}
                       onAttachmentsChange={handleAttachmentsChange}
+                      athProductsList={athProductsList}
                     />
                   </Box>
                 ))}

@@ -24,6 +24,7 @@ const AthDeptsMainBranch = ({
   fileErrors,
   attachments,
   onAttachmentsChange,
+  athProductsList,
 }) => {
   const { control } = useFormContext();
 
@@ -31,14 +32,6 @@ const AthDeptsMainBranch = ({
     control,
     name: `athDepts.${index}.diffPointOfContact`,
   });
-
-  const products = [
-    "T-Shirts",
-    "Posters",
-    "Banners",
-    "Pocket Schedules",
-    "Fridge Magnets",
-  ];
 
   const {
     fields: deptProductFields,
@@ -210,7 +203,7 @@ const AthDeptsMainBranch = ({
             multiple
             id="productsNeeded"
             size="small"
-            options={products}
+            options={athProductsList}
             getOptionLabel={(option) => option}
             onChange={(_, data) => {
               field.onChange(data);
