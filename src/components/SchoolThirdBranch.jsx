@@ -24,16 +24,21 @@ const SchoolThirdBranch = ({
       </Typography>
 
       <Controller
-        name={`schoolBranches.${branchIndex}.deptBranches.${secondaryBranchIndex}.productPlacements.${thirdIndex}.adSpacePurchased`}
         control={control}
-        defaultValue={false} // Set the default value of the checkbox
+        name={`schoolBranches.${branchIndex}.deptBranches.${secondaryBranchIndex}.productPlacements.${thirdIndex}.adSpacePurchased`}
+        defaultValue={""}
         render={({ field }) => (
-          <FormGroup>
-            <FormControlLabel
-              control={<Checkbox {...field} />}
-              label="Ad Space Purchased?"
-            />
-          </FormGroup>
+          <TextField
+            multiline
+            rows={3}
+            size="small"
+            id="adSpacePurchased"
+            variant="outlined"
+            fullWidth
+            label="Ad Space Purchased?"
+            {...field}
+            sx={{ mb: "1rem", mt: "5px" }}
+          />
         )}
       />
 
