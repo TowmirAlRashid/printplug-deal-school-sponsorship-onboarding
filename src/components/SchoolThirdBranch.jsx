@@ -68,7 +68,7 @@ const SchoolThirdBranch = ({
             id="desiredColorOfAdvertisement"
             variant="outlined"
             fullWidth
-            label="Desired Color of Advertisement?"
+            label="Desired Size of Garment Delivery?"
             {...field}
             sx={{ mb: "1rem", mt: "5px" }}
           />

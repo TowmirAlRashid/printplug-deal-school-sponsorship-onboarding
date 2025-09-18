@@ -411,7 +411,7 @@ function App() {
                     prod?.logoReadyProvided +
                     newLine +
                     newLine +
-                    "Desired Color of Advertisement?: " +
+                    "Desired Size of Garment Delivery?: " +
                     prod?.desiredColorOfAdvertisement +
                     newLine +
                     newLine +
