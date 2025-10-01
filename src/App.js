@@ -428,6 +428,8 @@ function App() {
 
                   sizeText =
                     sizeText +
+                    newLine +
+                    newLine +
                     prod?.name +
                     ": " +
                     prod?.desiredColorOfAdvertisement;
