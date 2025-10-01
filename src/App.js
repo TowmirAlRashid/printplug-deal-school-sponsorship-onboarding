@@ -119,7 +119,7 @@ function App() {
     defaultValues: {
       contactInfo: {
         Contact_Name: recordData?.Contact_Name?.name,
-        Contact_Role: recordRelatedContactRoles?.Full_Name,
+        Contact_Role: recordRelatedContactRoles?.Full_Name || "",
         Contact_Phone: recordData?.Contact_Phone,
         Contact_Email: recordData?.Contact_Email,
       },
@@ -204,38 +204,44 @@ function App() {
     setLoading(true);
     console.log("Collected Form Data:", data);
 
+    let sizeText =
+      recordData?.Desired_Size !== null
+        ? recordData?.Desired_Size + newLine + newLine
+        : "";
+
     let content =
       "CONTACT INFO" +
-      newLine +
-      "---------------------------" +
-      newLine +
-      newLine +
-      "Contact Name: " +
-      data?.contactInfo?.Contact_Name +
-      newLine +
-      newLine +
-      "Contact Role: " +
-      data?.contactInfo?.Contact_Role +
-      newLine +
-      newLine +
-      "Contact Phone: " +
-      data?.contactInfo?.Contact_Phone +
-      newLine +
-      newLine +
-      "Contact Email: " +
-      data?.contactInfo?.Contact_Email +
-      newLine +
-      newLine +
-      newLine +
-      "DETAILED INFO" +
-      newLine +
-      "---------------------------" +
-      newLine +
-      newLine +
-      "School or Advertiser?: " +
-      data?.schoolOrAdvertiser +
-      newLine +
-      newLine;
+        newLine +
+        "---------------------------" +
+        newLine +
+        newLine +
+        "Contact Name: " +
+        data?.contactInfo?.Contact_Name +
+        newLine +
+        newLine +
+        "Contact Role: " +
+        data?.contactInfo?.Contact_Role ||
+      "" +
+        newLine +
+        newLine +
+        "Contact Phone: " +
+        data?.contactInfo?.Contact_Phone +
+        newLine +
+        newLine +
+        "Contact Email: " +
+        data?.contactInfo?.Contact_Email +
+        newLine +
+        newLine +
+        newLine +
+        "DETAILED INFO" +
+        newLine +
+        "---------------------------" +
+        newLine +
+        newLine +
+        "School or Advertiser?: " +
+        data?.schoolOrAdvertiser +
+        newLine +
+        newLine;
 
     if (data?.schoolOrAdvertiser === "School") {
       content =
@@ -419,6 +425,12 @@ function App() {
                     prod?.designNotes +
                     newLine +
                     newLine;
+
+                  sizeText =
+                    sizeText +
+                    prod?.name +
+                    ": " +
+                    prod?.desiredColorOfAdvertisement;
                 });
               }
             });
@@ -426,6 +438,20 @@ function App() {
         });
       }
       content = content + "Payment Rendered?: " + data?.paymentRendered;
+    }
+
+    if (sizeText !== "") {
+      var config = {
+        Entity: entity,
+        APIData: {
+          id: entityId,
+          Desired_Size: sizeText,
+        },
+        Trigger: ["workflow"],
+      };
+
+      const fieldUpdate = await ZOHO.CRM.API.updateRecord(config);
+      console.log(fieldUpdate);
     }
 
     // 🔹 Create the Note first
@@ -495,13 +521,7 @@ function App() {
   // Example usage
   var newLine = hexToText("0A");
 
-  if (
-    initialized &&
-    recordData &&
-    recordRelatedContactRoles &&
-    athDeptsList &&
-    athProductsList
-  ) {
+  if (initialized && recordData && athDeptsList && athProductsList) {
     return (
       <Box sx={{ width: "100%" }}>
         <FormProvider {...methods}>
@@ -554,8 +574,7 @@ function App() {
                 <Controller
                   control={control}
                   name="contactInfo.Contact_Name"
-                  rules={{ required: true }}
-                  defaultValue={recordData?.Contact_Name?.name}
+                  defaultValue={recordData?.Contact_Name?.name || ""}
                   render={({ field }) => (
                     <TextField
                       size="small"
@@ -564,7 +583,6 @@ function App() {
                       fullWidth
                       {...field}
                       label="Contact Name"
-                      error={errors["contactInfo.Contact_Name"]}
                     />
                   )}
                 />
@@ -572,8 +590,7 @@ function App() {
                 <Controller
                   control={control}
                   name="contactInfo.Contact_Role"
-                  rules={{ required: true }}
-                  defaultValue={recordRelatedContactRoles?.Full_Name}
+                  defaultValue={recordRelatedContactRoles?.Full_Name || ""}
                   render={({ field }) => (
                     <TextField
                       size="small"
@@ -582,7 +599,6 @@ function App() {
                       fullWidth
                       {...field}
                       label="Contact Role"
-                      error={errors["contactInfo.Contact_Role"]}
                     />
                   )}
                 />
@@ -601,7 +617,6 @@ function App() {
                 <Controller
                   control={control}
                   name="contactInfo.Contact_Phone"
-                  rules={{ required: true }}
                   defaultValue={recordData?.Contact_Phone}
                   render={({ field }) => (
                     <TextField
@@ -611,7 +626,6 @@ function App() {
                       fullWidth
                       {...field}
                       label="Contact Phone"
-                      error={errors["contactInfo.Contact_Phone"]}
                     />
                   )}
                 />
@@ -619,7 +633,6 @@ function App() {
                 <Controller
                   control={control}
                   name="contactInfo.Contact_Email"
-                  rules={{ required: true }}
                   defaultValue={recordData?.Contact_Email}
                   render={({ field }) => (
                     <TextField
@@ -629,7 +642,6 @@ function App() {
                       fullWidth
                       {...field}
                       label="Contact Email"
-                      error={errors["contactInfo.Contact_Email"]}
                     />
                   )}
                 />
